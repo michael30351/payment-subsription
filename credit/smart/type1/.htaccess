@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+
+RewriteEngine On
+
+# RewriteBase を設定（適切なディレクトリに相対的に指定）
+RewriteBase /subscription-payments/credit/smart/type1/
+
+# /subscription-payments/credit/smart/type1/ にアクセスした場合、?openExternalBrowser=1 を付与してリダイレクト
+RewriteCond %{QUERY_STRING} !(^|&)openExternalBrowser=1(&|$)
+
+# ?openExternalBrowser=1 が無い場合
+RewriteRule ^$ /subscription-payments/credit/smart/type1/?openExternalBrowser=1 [L,R=301]
+
+</IfModule>

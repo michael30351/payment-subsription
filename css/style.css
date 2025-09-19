@@ -1,0 +1,975 @@
+@charset "UTF-8";
+/* -----------------------------------------
+Reaet
+----------------------------------------- */
+html {
+    font-family: sans-serif;
+    -moz-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    margin-top: 0 !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+div,
+span,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+abbr,
+address,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+samp,
+small,
+strong,
+sub,
+sup,
+var,
+b,
+i,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+dialog,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    font-weight: inherit;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section,
+summary {
+    display: block;
+}
+
+ul,
+ol {
+    list-style-type: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+td,
+th {
+    padding: 0;
+}
+
+img {
+    max-width: 100%;
+    vertical-align: bottom;
+    border: 0;
+    width: 100%;
+    height: auto;
+}
+
+i {
+    display: block;
+}
+
+a {
+    background-color: transparent;
+    text-decoration: none;
+}
+a:hover,
+a:active {
+    text-decoration: none;
+    outline: 0;
+}
+a:before,
+a:after {
+    text-decoration: none;
+}
+
+b,
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: normal;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    color: inherit;
+    font: inherit;
+    margin: 0;
+}
+
+button {
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    overflow: visible;
+    text-transform: none;
+}
+button:focus {
+    outline: none;
+}
+
+select {
+    appearance: none;
+    text-transform: none;
+}
+
+input[type="date"] {
+    appearance: none;
+}
+
+button {
+    -webkit-appearance: button;
+    cursor: pointer;
+}
+
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
+}
+
+button[disabled],
+input[disabled] {
+    cursor: default;
+}
+
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+
+input {
+    line-height: normal;
+    vertical-align: middle;
+}
+input::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
+select {
+    vertical-align: middle;
+}
+
+textarea {
+    overflow: auto;
+}
+
+optgroup {
+    font-weight: bold;
+}
+
+/* -----------------------------------------
+Scaffolding
+----------------------------------------- */
+body {
+    min-width: 1000px;
+    background-color: #fff;
+}
+
+.wrapper {
+    position: relative;
+    font-family: "ヒラギノ角ゴ Pro W9", "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+    font-size: 14px;
+    line-height: 1.35;
+}
+.wrapper * {
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+}
+.wrapper a {
+    position: relative;
+}
+.wrapper a:hover,
+.wrapper a:active,
+.wrapper a:focus {
+    text-decoration: none;
+}
+
+.pc-only {
+    display: block;
+}
+
+.sp-only {
+    display: none;
+}
+
+.inner {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+@media screen and (max-width: 767px) {
+    .inner {
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    body {
+        min-width: 320px;
+    }
+    .pc-only {
+        display: none;
+    }
+    .sp-only {
+        display: block;
+    }
+}
+/* -----------------------------------------
+Page Contetns
+----------------------------------------- */
+.link-over {
+    opacity: 1;
+    transition: opacity 0.4s;
+}
+.link-over:hover {
+    opacity: 0.8;
+}
+
+body {
+    padding-top: 60px;
+}
+@media screen and (max-width: 767px) {
+    body {
+        padding-top: 64px;
+    }
+}
+
+/* Header
+----------------------------------------- */
+.header {
+    background-color: #1e2f43;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+}
+.header .inner {
+    padding: 8px 10px;
+}
+@media screen and (max-width: 767px) {
+    .header .inner {
+        padding: 0 10px;
+    }
+}
+.header .box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.header .box .logo {
+    width: 90px;
+    display: block;
+    position: relative;
+    margin-top: -8px;
+    margin-bottom: -28px;
+    background-color: #fff;
+    text-align: center;
+}
+@media screen and (max-width: 767px) {
+    .header .box .logo {
+        width: 80px;
+        margin-top: 0;
+        margin-bottom: -12px;
+    }
+}
+.header .box .logo a {
+    display: block;
+    padding: 6px 0;
+}
+@media screen and (max-width: 767px) {
+    .header .box .logo a {
+        padding: 4px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+.header .box .logo img {
+    width: 50px;
+}
+@media screen and (max-width: 767px) {
+    .header .box .logo img {
+        width: 70px;
+        height: 68px;
+    }
+}
+.header.with {
+    background-color: #ff5a00;
+}
+
+/* Footer
+----------------------------------------- */
+.footer {
+    background-color: #1e2f43;
+}
+.footer .copyright {
+    border-top: 1px solid #566372;
+    text-align: center;
+    padding: 8px 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    font-weight: 400;
+}
+@media screen and (max-width: 767px) {
+    .footer .copyright {
+        font-size: 10px;
+        letter-spacing: 1px;
+    }
+}
+
+/* -----------------------------------------
+Contactページ
+----------------------------------------- */
+.contact-page {
+    /* FV
+  ----------------------------------------- */
+    /* Form-area
+  ----------------------------------------- */
+}
+.contact-page .fv .inner {
+    padding: 80px 0;
+    text-align: center;
+}
+@media screen and (max-width: 767px) {
+    .contact-page .fv .inner {
+        padding: 60px 10px;
+    }
+}
+.contact-page .fv h1 {
+    color: #1e2f43;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+@media screen and (max-width: 767px) {
+    .contact-page .fv h1 {
+        font-size: 22px;
+    }
+}
+.contact-page .form-area .inner {
+    max-width: 800px;
+    padding: 40px 40px 120px 40px;
+    position: relative;
+}
+@media screen and (max-width: 767px) {
+    .contact-page .form-area .inner {
+        padding: 0 20px 80px;
+    }
+}
+.contact-page .form-area .tab-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0 20px;
+    margin-bottom: 60px;
+}
+@media screen and (max-width: 767px) {
+    .contact-page .form-area .tab-wrap {
+        gap: 0 10px;
+        margin-bottom: 40px;
+    }
+}
+.contact-page .form-area .tab-wrap .tab-btn {
+    appearance: none;
+    flex: 1;
+    padding: 16px 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 10px 10px 0 0;
+    position: relative;
+}
+@media screen and (max-width: 767px) {
+    .contact-page .form-area .tab-wrap .tab-btn {
+        font-size: 14px;
+    }
+}
+.contact-page .form-area .tab-wrap .tab-btn.active:after {
+    content: "";
+    position: absolute;
+    display: block;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%) translateY(100%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 14px 14px 0 14px;
+    z-index: 1;
+}
+.contact-page .form-area .tab-wrap.smart-tab .tab-btn {
+    border: 2px solid #2ba8e8;
+}
+.contact-page .form-area .tab-wrap.smart-tab .tab-btn.active {
+    background-color: #2ba8e8;
+    color: #fff;
+}
+.contact-page .form-area .tab-wrap.smart-tab .tab-btn.active:after {
+    border-color: #2ba8e8 transparent transparent transparent;
+}
+.contact-page .form-area .tab-wrap.with-tab .tab-btn {
+    border: 2px solid #ff5a00;
+}
+.contact-page .form-area .tab-wrap.with-tab .tab-btn.active {
+    background-color: #ff5a00;
+    color: #fff;
+}
+.contact-page .form-area .tab-wrap.with-tab .tab-btn.active:after {
+    border-color: #ff5a00 transparent transparent transparent;
+}
+.contact-page .form-area .tab-panel {
+    display: none;
+}
+.contact-page .form-area .tab-panel.active {
+    display: block;
+}
+.contact-page .form-area .input-area {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+@media screen and (max-width: 767px) {
+    .contact-page .form-area .input-area {
+        flex-flow: column;
+    }
+}
+.contact-page .form-area .input-area .headline {
+    width: 40%;
+    font-size: 16px;
+    font-weight: 600;
+}
+@media screen and (max-width: 767px) {
+    .contact-page .form-area .input-area .headline {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+.contact-page .form-area .input-area .headline span {
+    display: inline-block;
+    border: 1px solid #d60000;
+    color: #d60000;
+    padding: 2px 4px;
+    margin-left: 20px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+.contact-page .form-area .input-area .input {
+    width: 60%;
+}
+@media screen and (max-width: 767px) {
+    .contact-page .form-area .input-area .input {
+        width: 100%;
+    }
+}
+.contact-page .form-area .input-area .input select {
+    width: 100%;
+    appearance: none;
+    padding: 14px;
+    font-weight: 600;
+    border: 2px solid #d9d9d9;
+    border-radius: 8px;
+}
+.contact-page .form-area .input-area .input input[type="text"],
+.contact-page .form-area .input-area .input input[type="email"],
+.contact-page .form-area .input-area .input input[type="date"] {
+    width: 100%;
+    appearance: none;
+    padding: 14px;
+    font-weight: 600;
+    border: 2px solid #d9d9d9;
+    border-radius: 8px;
+}
+.contact-page .form-area .input-area .input .code-wrap {
+    position: relative;
+}
+.contact-page .form-area .input-area .input .code-wrap #campaign_code {
+    padding: 14px 80px 14px 14px;
+}
+.contact-page .form-area .input-area .input .code-wrap .code-btn {
+    display: inline-block;
+    background-color: #2ba8e8;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 8px;
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%) translateX(0);
+}
+.contact-page .form-area .input-area .input #campaign_code_txt {
+    margin-top: 10px;
+}
+.contact-page .form-area .input-area .error-message {
+    color: #d60000;
+    font-weight: 600;
+    margin-top: 4px;
+    display: none;
+}
+.contact-page .form-area .input-area .plan-radio,
+.contact-page .form-area .input-area .option-checkbox {
+    display: none;
+}
+.contact-page .form-area .input-area .plan-radio:checked + .plan-label,
+.contact-page .form-area .input-area .option-checkbox:checked + .plan-label {
+    background-color: #2ba8e8;
+    color: #fff;
+}
+.contact-page .form-area .input-area .plan-radio:checked + .plan-label .plan-name,
+.contact-page .form-area .input-area .option-checkbox:checked + .plan-label .plan-name {
+    color: #fff;
+}
+.contact-page .form-area .input-area .plan-radio:checked + .plan-label span,
+.contact-page .form-area .input-area .option-checkbox:checked + .plan-label span {
+    color: #fff;
+}
+.contact-page .form-area .input-area .option-checkbox {
+    display: none;
+}
+.contact-page .form-area .input-area .option-checkbox:checked + .option-label {
+    background-color: #2ba8e8;
+    color: #fff;
+}
+.contact-page .form-area .input-area .option-checkbox:checked + .option-label .plan-name {
+    color: #fff;
+}
+.contact-page .form-area .input-area .option-checkbox:checked + .option-label span {
+    color: #fff;
+}
+.contact-page .form-area .input-area .plan-label {
+    display: flex;
+    margin-bottom: 10px;
+    border: 2px solid #d9d9d9;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.4s;
+    padding: 16px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.contact-page .form-area .input-area .plan-label .plan-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+.contact-page .form-area .input-area .plan-label span {
+    font-size: 12px;
+}
+.contact-page .form-area .input-area .plan-label span b {
+    font-size: 14px;
+}
+.contact-page .form-area .input-area .option-label {
+    display: flex;
+    margin-bottom: 10px;
+    border: 2px solid #d9d9d9;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.4s;
+    padding: 16px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.contact-page .form-area .input-area .option-label .option-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+.contact-page .form-area .input-area .option-label span {
+    font-size: 12px;
+}
+.contact-page .form-area .input-area .option-label span b {
+    font-size: 14px;
+}
+.contact-page .form-area .buy-contents {
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #d9d9d9;
+}
+.contact-page .form-area .buy-contents h2 {
+    color: #1e2f43;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+}
+.contact-page .form-area .buy-contents ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+.contact-page .form-area .buy-contents ul li {
+    padding: 0 10px;
+    width: 50%;
+}
+.contact-page .form-area .buy-contents ul li:last-child {
+    text-align: right;
+}
+.contact-page .form-area .buy-contents .discount ul li b {
+    color: #ff0000;
+}
+.contact-page .form-area .total-price {
+    margin: 20px 0 80px;
+}
+.contact-page .form-area .total-price ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+.contact-page .form-area .total-price ul li {
+    padding: 0 10px;
+    width: 50%;
+}
+.contact-page .form-area .total-price ul li:last-child {
+    text-align: right;
+}
+.contact-page .form-area .form-btn {
+    text-align: center;
+    margin-top: 40px;
+}
+.contact-page .form-area .form-btn button {
+    appearance: none;
+    border: none;
+    background-color: #d60000;
+    color: #fff;
+    font-weight: 900;
+    padding: 20px 60px;
+    display: inline-block;
+    border-radius: 30px;
+}
+.contact-page .form-area .form-btn button:disabled {
+    opacity: 0.5;
+}
+.contact-page .form-area .message {
+    text-align: center;
+}
+.contact-page .form-area .message p {
+    font-weight: 600;
+    font-size: 16px;
+}
+.contact-page .form-area .message .btn {
+    margin-top: 40px;
+}
+.contact-page .form-area .message .btn a,
+.contact-page .form-area .message .btn button {
+    background-color: #d60000;
+    color: #fff;
+    font-weight: 900;
+    padding: 16px 50px;
+    display: inline-block;
+    border-radius: 30px;
+}
+.contact-page .fixed-bar {
+    background-color: #1e2f43;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    transition: all 0.4s;
+}
+.contact-page .fixed-bar .inner {
+    max-width: 600px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.contact-page .fixed-bar .ttl {
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    border: 1px solid #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+}
+.contact-page .fixed-bar .price {
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+}
+.contact-page .fixed-bar .price b {
+    display: block;
+    font-size: 26px;
+    letter-spacing: 1px;
+}
+.contact-page.with .form-area .input-area .plan-radio:checked + .plan-label {
+    background-color: #ff5a00;
+}
+.contact-page.with .form-area .input-area .option-checkbox:checked + .plan-label {
+    background-color: #ff5a00;
+}
+.contact-page.with .form-area .input-area .option-checkbox:checked + .option-label {
+    background-color: #ff5a00;
+}
+.contact-page.with .form-area .input-area .input .code-wrap .code-btn {
+    background-color: #ff5a00;
+}
+.contact-page.with .fixed-bar {
+    background-color: #ff5a00;
+}
+
+.terms-check-box {
+    margin-bottom: 60px;
+}
+.terms-check-box .ttl {
+    background-color: #2ba8e8;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+.terms-check-box .box {
+    padding: 0 20px;
+}
+.terms-check-box .link {
+    margin-bottom: 30px;
+}
+.terms-check-box .link span {
+    display: inline-block;
+    background-color: #2ba8e8;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 4px 8px;
+    font-size: 10px;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.terms-check-box .link a {
+    color: #1e2f43;
+    font-weight: 600;
+    display: inline-block;
+    vertical-align: middle;
+    border-bottom: 2px solid #1e2f43;
+    letter-spacing: 1px;
+}
+.terms-check-box label {
+    border: 2px solid #2ba8e8;
+    border-radius: 4px;
+    padding: 12px 20px;
+    display: block;
+    background-color: rgba(43, 168, 232, 0.2);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+.terms-check-box label #terms {
+    appearance: none;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #2ba8e8;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.terms-check-box label #terms:checked::after {
+    content: "";
+    position: absolute;
+    top: 3.5px;
+    left: 2.5px;
+    width: 10px;
+    height: 4px;
+    border-bottom: 2px solid #2ba8e8;
+    border-left: 2px solid #2ba8e8;
+    transform: rotate(-45deg);
+}
+.terms-check-box label:has(#terms:disabled) {
+    opacity: 0.4;
+}
+.terms-check-box .error-message {
+    color: #d60000;
+    font-weight: 600;
+    margin-top: 4px;
+    display: none;
+}
+@media screen and (max-width: 767px) {
+    .terms-check-box .box {
+        padding: 0;
+    }
+}
+
+.contact-page .form-area .input-area .notice {
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.pair-check-box {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.pair-check-box label {
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+.pair-check-box label #pair {
+    appearance: none;
+    position: relative;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #d9d9d9;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.pair-check-box label #pair:checked::after {
+    content: "";
+    position: absolute;
+    top: 4.5px;
+    left: 3.5px;
+    width: 10px;
+    height: 5px;
+    border-bottom: 2px solid #ccc;
+    border-left: 2px solid #ccc;
+    transform: rotate(-45deg);
+}
+
+.contact-page .form-area .input-area .option-box {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.4s;
+    padding: 16px 10px;
+    border-bottom: 1px solid #d9d9d9;
+}
+.contact-page .form-area .input-area .option-box .label {
+    line-height: 1.75;
+    padding-right: 10px;
+}
+.contact-page .form-area .input-area .option-box .label .option-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+.contact-page .form-area .input-area .option-box .label .option-price {
+    font-size: 12px;
+}
+.contact-page .form-area .input-area .option-box .action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+}
+
+.contact-page .form-area .input-area .option-box .action .btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #d9d9d9;
+    margin: 0 10px;
+    position: relative;
+}
+
+/* 横線（マイナス記号）- 両方のボタンに適用 */
+.contact-page .form-area .input-area .option-box .action .btn:before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 2px;
+    background-color: #000;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+}
+
+/* 縦線 - plusボタンのみに適用してプラス記号にする */
+.contact-page .form-area .input-area .option-box .action .btn.plus:after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 12px;
+    background-color: #000;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+}
