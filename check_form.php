@@ -652,43 +652,10 @@ if (isset($_POST["option_with_quantity"])) {
     exit;
 }
 
-// ===== ペア入会と新規/既存ゲスト対応の料金計算システム ===== //
-
-// 開始日による月数計算
-if (isset($_POST["calculate_months"])) {
-    $startDate = $_POST["start_date"] ?? '';
-    
-    if (!empty($startDate)) {
-        $day = (int)date('d', strtotime($startDate));
-        $months = ($day <= 15) ? 2 : 1.5;
-        
-        header('Content-Type: application/json');
-        echo json_encode([
-            'months' => $months,
-            'start_day' => $day
-        ]);
-        exit;
-    }
-    
-    header('Content-Type: application/json');
-    echo json_encode(['error' => 'Invalid start date']);
-    exit;
-}
-
-// ペア入会時の金額計算（新要件対応）
+// ペア入会時の金額計算
 if (isset($_POST["calculate_pair_price"])) {
     $planName = $_POST["plan"] ?? '';
     $gymName = $_POST["gym"] ?? '';
-    $startDate = $_POST["start_date"] ?? '';
-    $isNewGuest = $_POST["is_new_guest"] ?? true;
-    $selectedOptions = $_POST["selected_options"] ?? [];
-    
-    // 開始日による月数計算
-    $months = 1;
-    if (!empty($startDate)) {
-        $day = (int)date('d', strtotime($startDate));
-        $months = ($day <= 15) ? 2 : 1.5;
-    }
     
     // プラン価格を取得
     $planPrice = 0;
@@ -698,225 +665,21 @@ if (isset($_POST["calculate_pair_price"])) {
         $planPrice = $plans[$planName]['price'];
     }
     
-    // ペア入会時のプラン料金計算（2人分の20%OFF）
-    $pairPlanPrice = round(($planPrice * 2) * 0.8);
-    
-    // 初回支払い金額計算
-    $initialPayment = [];
-    $monthlyPayment = [];
-    
-    // 入会金（新規ゲストのみ、ペアの場合は2人で10,000円）
-    if ($isNewGuest) {
-        $initialPayment['entrance_fee'] = 10000;
-    }
-    
-    // プラン金額
-    if ($isNewGuest) {
-        $initialPayment['plan_fee'] = $pairPlanPrice * $months;
-    } else {
-        $initialPayment['plan_fee'] = $pairPlanPrice;
-    }
-    $monthlyPayment['plan_fee'] = $pairPlanPrice;
-    
-    // 共用設備費
-    $facilityFee = 660;
-    if ($isNewGuest) {
-        $initialPayment['facility_fee'] = $facilityFee * $months;
-    } else {
-        $initialPayment['facility_fee'] = $facilityFee;
-    }
-    $monthlyPayment['facility_fee'] = $facilityFee;
-    
-    // オプション料金計算
-    $initialPayment['options'] = [];
-    $monthlyPayment['options'] = [];
-    
-    foreach ($selectedOptions as $option) {
-        $optionName = $option['name'] ?? '';
-        $optionPrice = 0;
-        
-        if (array_key_exists($optionName, $options)) {
-            $optionPrice = $options[$optionName]['price'];
-        }
-        
-        // ペア料金（2倍）
-        $pairOptionPrice = $optionPrice * 2;
-        
-        if ($optionName === 'シューズお預かり') {
-            // シューズお預かりは月額制
-            if ($isNewGuest) {
-                $initialPayment['options'][$optionName] = $pairOptionPrice * $months;
-            } else {
-                $initialPayment['options'][$optionName] = $pairOptionPrice;
-            }
-            $monthlyPayment['options'][$optionName] = $pairOptionPrice;
-            
-        } elseif (in_array($optionName, ['食事サポート2週間', '食事サポート4週間'])) {
-            // 食事サポートは初回のみ
-            $initialPayment['options'][$optionName] = $pairOptionPrice;
-        }
-    }
-    
-    // 合計金額計算
-    $initialTotal = array_sum($initialPayment);
-    foreach ($initialPayment['options'] as $optionFee) {
-        $initialTotal += $optionFee;
-    }
-    
-    $monthlyTotal = array_sum($monthlyPayment);
-    foreach ($monthlyPayment['options'] as $optionFee) {
-        $monthlyTotal += $optionFee;
-    }
+    // ペア割引計算（2人分の20%OFF）
+    $pairPrice = $planPrice * 2;
+    $discountedPrice = round($pairPrice * 0.8);
+    $discountAmount = $pairPrice - $discountedPrice;
     
     header('Content-Type: application/json');
     echo json_encode([
-        'months' => $months,
-        'single_plan_price' => $planPrice,
-        'pair_plan_price' => $pairPlanPrice,
-        'discount_amount' => ($planPrice * 2) - $pairPlanPrice,
-        'initial_payment' => $initialPayment,
-        'monthly_payment' => $monthlyPayment,
-        'initial_total' => $initialTotal,
-        'monthly_total' => $monthlyTotal,
-        'is_new_guest' => $isNewGuest
-    ]);
-    exit;
-}
-
-// 通常の料金計算（ペア入会でない場合）
-if (isset($_POST["calculate_regular_price"])) {
-    $planName = $_POST["plan"] ?? '';
-    $gymName = $_POST["gym"] ?? '';
-    $startDate = $_POST["start_date"] ?? '';
-    $isNewGuest = $_POST["is_new_guest"] ?? true;
-    $selectedOptions = $_POST["selected_options"] ?? [];
-    
-    // 開始日による月数計算
-    $months = 1;
-    if (!empty($startDate)) {
-        $day = (int)date('d', strtotime($startDate));
-        $months = ($day <= 15) ? 2 : 1.5;
-    }
-    
-    // プラン価格を取得
-    $planPrice = 0;
-    if (isset($gym_plans[$gymName]) && isset($gym_plans[$gymName][$planName])) {
-        $planPrice = $gym_plans[$gymName][$planName]['price'];
-    } elseif (isset($plans[$planName])) {
-        $planPrice = $plans[$planName]['price'];
-    }
-    
-    // 初回支払い金額計算
-    $initialPayment = [];
-    $monthlyPayment = [];
-    
-    // 入会金（新規ゲストのみ）
-    if ($isNewGuest) {
-        $initialPayment['entrance_fee'] = 10000;
-    }
-    
-    // プラン金額
-    if ($isNewGuest) {
-        $initialPayment['plan_fee'] = $planPrice * $months;
-    } else {
-        $initialPayment['plan_fee'] = $planPrice;
-    }
-    $monthlyPayment['plan_fee'] = $planPrice;
-    
-    // 共用設備費（通常は330円、ペアの場合のみ660円）
-    $facilityFee = 330;
-    if ($isNewGuest) {
-        $initialPayment['facility_fee'] = $facilityFee * $months;
-    } else {
-        $initialPayment['facility_fee'] = $facilityFee;
-    }
-    $monthlyPayment['facility_fee'] = $facilityFee;
-    
-    // オプション料金計算
-    $initialPayment['options'] = [];
-    $monthlyPayment['options'] = [];
-    
-    foreach ($selectedOptions as $option) {
-        $optionName = $option['name'] ?? '';
-        $optionPrice = 0;
-        
-        if (array_key_exists($optionName, $options)) {
-            $optionPrice = $options[$optionName]['price'];
-        }
-        
-        if ($optionName === 'シューズお預かり') {
-            // シューズお預かりは月額制
-            if ($isNewGuest) {
-                $initialPayment['options'][$optionName] = $optionPrice * $months;
-            } else {
-                $initialPayment['options'][$optionName] = $optionPrice;
-            }
-            $monthlyPayment['options'][$optionName] = $optionPrice;
-            
-        } elseif (in_array($optionName, ['食事サポート2週間', '食事サポート4週間'])) {
-            // 食事サポートは初回のみ
-            $initialPayment['options'][$optionName] = $optionPrice;
-        }
-    }
-    
-    // 合計金額計算
-    $initialTotal = array_sum($initialPayment);
-    foreach ($initialPayment['options'] as $optionFee) {
-        $initialTotal += $optionFee;
-    }
-    
-    $monthlyTotal = array_sum($monthlyPayment);
-    foreach ($monthlyPayment['options'] as $optionFee) {
-        $monthlyTotal += $optionFee;
-    }
-    
-    header('Content-Type: application/json');
-    echo json_encode([
-        'months' => $months,
-        'plan_price' => $planPrice,
-        'initial_payment' => $initialPayment,
-        'monthly_payment' => $monthlyPayment,
-        'initial_total' => $initialTotal,
-        'monthly_total' => $monthlyTotal,
-        'is_new_guest' => $isNewGuest
-    ]);
-    exit;
-}
-
-// 食事サポートの相互排他チェック
-if (isset($_POST["validate_meal_support"])) {
-    $selectedMealSupport = $_POST["selected_meal_support"] ?? [];
-    
-    $hasTwoWeek = in_array('食事サポート2週間', $selectedMealSupport);
-    $hasFourWeek = in_array('食事サポート4週間', $selectedMealSupport);
-    
-    $isValid = !($hasTwoWeek && $hasFourWeek);
-    
-    header('Content-Type: application/json');
-    echo json_encode([
-        'valid' => $isValid,
-        'message' => $isValid ? 'OK' : '食事サポートは2週間または4週間のどちらか一つのみ選択してください'
+        'single_price' => $planPrice,
+        'pair_price' => $pairPrice,
+        'discounted_price' => $discountedPrice,
+        'discount_amount' => $discountAmount,
+        'discount_rate' => 0.2
     ]);
     exit;
 }
 
 // ===== 追加ここまで ===== //
-?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ?>

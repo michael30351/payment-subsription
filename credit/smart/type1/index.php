@@ -592,7 +592,7 @@ $formData = $_SESSION['formData'];
         let selected_rate = 2; // 選択した日付の金額算出率
         let selected_value = null; // 選択した日付の値
 
-        const equipment_price = 300; // 共用設備費
+        const equipment_price = 300; // 共用設備費（通常時）
         let plan_price = 0; // プラン金額
         let plan_times = 0; // プラン回数
         let times_option_price = 0; // オプション金額（回数オプション）
@@ -696,6 +696,9 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
     option_quantities[optionName] = count;
     
     updateOptionPriceWithQuantity();
+
+
+
     calculatePrice();
 });
 
@@ -728,6 +731,11 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
                         type = 3;
                     }
                     
+                    // ペア入会時の料金計算
+                    if(pair_entry_flag) {
+                        price = price * 2; // ペア時は2倍
+                    }
+                    
                     if(type === 2) {
                         let monthlyTotal = price * quantity;
                         
@@ -738,18 +746,26 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
                         }
                         subscription_option_price += monthlyTotal;
                         
+                        let displayText = `${optionName} × ${quantity}`;
+                        if(pair_entry_flag) {
+                            displayText += '（ペア）';
+                        }
                         selected_option.append(
                             `<ul>
-                                <li>${optionName} × ${quantity}</li>
+                                <li>${displayText}</li>
                                 <li>¥${monthlyTotal.toLocaleString()} × ${selected_rate} = ¥${(monthlyTotal * selected_rate).toLocaleString()}</li>
                             </ul>`
                         );
                     } else if(type === 3) {
                         food_option_price += price * quantity;
                         
+                        let displayText = `${optionName} × ${quantity}`;
+                        if(pair_entry_flag) {
+                            displayText += '（ペア）';
+                        }
                         selected_option.append(
                             `<ul>
-                                <li>${optionName} × ${quantity}</li>
+                                <li>${displayText}</li>
                                 <li>¥${(price * quantity).toLocaleString()}</li>
                             </ul>`
                         );
@@ -867,14 +883,18 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
             
             // ペア割引の適用
             if(pair_entry_flag) {
-                let plan_equipment = (plan_price + equipment_price) * (target == 'tab1' ? selected_rate : 1);
-                plan_equipment = plan_equipment * 2 * 0.8;
+                // ペア時はプラン料金×2の20%OFF
+                let pair_plan_price = plan_price * 2 * 0.8;
+                let pair_equipment_price = 660; // ペア時の共用設備費
                 
                 if (target == 'tab1') {
-                    base_price = plan_equipment + first_option_price + food_option_price + 
+                    base_price = (pair_plan_price * (selected_rate - 1)) + 
+                                (pair_equipment_price * (selected_rate - 1)) +
+                                first_option_price + food_option_price + 
                                 admission_fee - admission_fee_discount_price - first_plan_discount_price;
                 } else {
-                    base_price = plan_equipment + first_option_price + food_option_price - 
+                    base_price = pair_plan_price + pair_equipment_price + 
+                                first_option_price + food_option_price - 
                                 first_plan_discount_price;
                 }
             }
@@ -899,8 +919,10 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
                              equipment_price + subscription_option_price;
             
             if(pair_entry_flag) {
-                let plan_equipment = (plan_price - subscription_plan_discount_price + equipment_price) * 2 * 0.8;
-                base_price = plan_equipment + subscription_option_price;
+                // ペア時はプラン料金×2の20%OFF + 共用設備費660円
+                let pair_plan_price = (plan_price - subscription_plan_discount_price) * 2 * 0.8;
+                let pair_equipment_price = 660;
+                base_price = pair_plan_price + pair_equipment_price + subscription_option_price;
             }
             
             subscription_price = base_price;
@@ -923,7 +945,13 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
 
             equipment_cost.empty(); // 一度クリア
 
-            let equipment_cost_price = Math.round(equipment_price * selected_rate); // 再計算
+            // ペア入会時の共用設備費計算
+            let equipment_cost_price;
+            if(pair_entry_flag) {
+                equipment_cost_price = Math.round(660 * selected_rate); // ペア時は660円
+            } else {
+                equipment_cost_price = Math.round(equipment_price * selected_rate); // 通常時は300円
+            }
 
             // // 初月換算
             // first_price = makeFirstPeriodPrice();
@@ -1080,17 +1108,29 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
             selected_admission.empty(); // 一度クリア
 
             if (target == 'tab1') {
-                admission_fee = 10000;
-
+                if(pair_entry_flag) {
+                    admission_fee = 10000; // ペア時は2人で10,000円（1名分無料）
+                } else {
+                    admission_fee = 10000; // 通常時は10,000円
+                }
             } else if (target == 'tab2') {
                 admission_fee = 0;
             }
-            selected_admission.append(
-                `<ul>
-                    <li>入会金</li>
-                    <li>¥${admission_fee.toLocaleString()}</li>
-                </ul>`
-            );
+            if(pair_entry_flag && target == 'tab1') {
+                selected_admission.append(
+                    `<ul>
+                        <li>入会金（ペア）</li>
+                        <li>¥${admission_fee.toLocaleString()}（2人分）</li>
+                    </ul>`
+                );
+            } else {
+                selected_admission.append(
+                    `<ul>
+                        <li>入会金</li>
+                        <li>¥${admission_fee.toLocaleString()}</li>
+                    </ul>`
+                );
+            }
         }
 
         // タブ切り替え
@@ -1120,7 +1160,6 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
             if (get_plan_field) {
                 let get_plan_data = JSON.parse(get_plan_field); // プランデータを取得
                 updatePlanPrice(get_plan_data); // プラン再計算
-                console.log(get_plan_data);
             }
 
             // 選択されているオプションを取得
@@ -1216,6 +1255,7 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
             get_plan_field = $("#selected_plan")
                 .val(); // クーポンデータ
             if (get_plan_field) {
+                console.log(get_plan_field);
                 let get_plan_data = JSON.parse(get_plan_field); // プランデータを取得
                 updatePlanPrice(get_plan_data); // プラン再計算
             }
