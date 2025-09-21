@@ -683,6 +683,7 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
     console.log("Has plus class:", $(this).hasClass("plus"));
     console.log("Has minus class:", $(this).hasClass("minus"));
     console.log("Current count:", count);
+    console.log("Option name:", optionName);
     
     if($(this).hasClass("plus")) {
         count = Math.min(count + 1, 5);
@@ -696,8 +697,9 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
     option_quantities[optionName] = count;
     
     updateOptionPriceWithQuantity();
-
-
+    
+    // 食事サポートの相互排他チェックを実行
+    checkMealSupportExclusion();
 
     calculatePrice();
 });
@@ -799,20 +801,16 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
                 // 選択している日付の取得
                 if (date_value) { // 選択している場合
                     selected_value = parseInt(String(date_value).split("-")[2], 10);
-                    if (selected_value >= 1 && selected_value <= 15) {
+                    if (selected_value >= 1 && selected_value <= 14) {
                         selected_rate = 2;
-                        // $(".period").text("2");
                     } else {
                         selected_rate = 1.5;
-                        // $(".period").text("1.5");
                     }
                 } else {
                     selected_rate = 2;
-                    // $(".period").text("2");
                 }
             } else if (target == 'tab2') {
                 selected_rate = 1;
-                // $(".period").text("1");
             }
 
             return selected_rate;
@@ -885,7 +883,7 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
             if(pair_entry_flag) {
                 // ペア時はプラン料金×2の20%OFF
                 let pair_plan_price = plan_price * 2 * 0.8;
-                let pair_equipment_price = 660; // ペア時の共用設備費
+                let pair_equipment_price = equipment_price * 2; // ペア時の共用設備費（300円 × 2 = 600円）
                 
                 if (target == 'tab1') {
                     base_price = (pair_plan_price * (selected_rate - 1)) + 
@@ -919,9 +917,9 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
                              equipment_price + subscription_option_price;
             
             if(pair_entry_flag) {
-                // ペア時はプラン料金×2の20%OFF + 共用設備費660円
+                // ペア時はプラン料金×2の20%OFF + 共用設備費（ペア時は2人分）
                 let pair_plan_price = (plan_price - subscription_plan_discount_price) * 2 * 0.8;
-                let pair_equipment_price = 660;
+                let pair_equipment_price = equipment_price * 2; // 300円 × 2 = 600円
                 base_price = pair_plan_price + pair_equipment_price + subscription_option_price;
             }
             
@@ -948,15 +946,10 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
             // ペア入会時の共用設備費計算
             let equipment_cost_price;
             if(pair_entry_flag) {
-                equipment_cost_price = Math.round(660 * selected_rate); // ペア時は660円
+                equipment_cost_price = Math.round(equipment_price * 2 * selected_rate); // ペア時は300円×2=600円
             } else {
                 equipment_cost_price = Math.round(equipment_price * selected_rate); // 通常時は300円
             }
-
-            // // 初月換算
-            // first_price = makeFirstPeriodPrice();
-            // // 2ヶ月目以降換算
-            // subscription_price = makeSubscriptionPeriodPrice();
 
             equipment_cost.append(
                 `<ul>
@@ -1249,27 +1242,25 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
         $("#date").on("change", function() {
             // 選択している日付の取得
             let date_value = today_contents.val();
+            // selected_rateを計算
             selected_rate = getDay(date_value);
 
             // 選択されているプランを取得
-            get_plan_field = $("#selected_plan")
-                .val(); // クーポンデータ
+            get_plan_field = $("#selected_plan").val();
             if (get_plan_field) {
-                console.log(get_plan_field);
-                let get_plan_data = JSON.parse(get_plan_field); // プランデータを取得
+                let get_plan_data = JSON.parse(get_plan_field);
                 updatePlanPrice(get_plan_data); // プラン再計算
             }
 
             // 選択されているクーポンを取得
-            get_coupon_field = $("#campaign_discount")
-                .val(); // クーポンデータ
+            get_coupon_field = $("#campaign_discount").val();
             if (get_coupon_field) {
-                let get_coupon_data = JSON.parse(
-                    get_coupon_field); // クーポンデータを取得
+                let get_coupon_data = JSON.parse(get_coupon_field);
                 updateCouponPrice(get_coupon_data); // クーポン再計算
             }
 
-            $(".option-checkbox").trigger("change");
+            // オプションの再計算
+            updateOptionPriceWithQuantity();
 
             $("#selected_date").val(date_value);
 
@@ -1809,6 +1800,46 @@ $(".option-box .plus, .option-box .minus").on("click", function() {
                 return true;
             }
         });
+
+        // 食事サポートの相互排他チェック関数を外に移動
+        function checkMealSupportExclusion() {
+            const mealSupportBoxes = $(".option-box").filter(function() {
+                const optionName = $(this).find("input[name='option']").val();
+                return optionName === "食事サポート2週間" || optionName === "食事サポート4週間";
+            });
+            
+            let hasActiveMealSupport = false;
+            let activeMealSupportBox = null;
+            
+            mealSupportBoxes.each(function() {
+                const quantity = parseInt($(this).find(".action span:not(.btn)").text());
+                const optionName = $(this).find("input[name='option']").val();
+                
+                if (quantity > 0) {
+                    if (hasActiveMealSupport) {
+                        console.log("Disabling meal support:", optionName);
+                        // 既に他の食事サポートが選択されている場合は無効化
+                        $(this).find(".action span:not(.btn)").text("0");
+                        $(this).find(".plus, .minus").prop("disabled", true);
+                        // option_quantitiesも更新
+                        option_quantities[optionName] = 0;
+                    } else {
+                        hasActiveMealSupport = true;
+                        activeMealSupportBox = $(this);
+                        console.log("Active meal support:", optionName);
+                    }
+                }
+            });
+            
+            // 選択されていない食事サポートのボタンを有効化
+            mealSupportBoxes.not(activeMealSupportBox).each(function() {
+                $(this).find(".plus, .minus").prop("disabled", false);
+            });
+            
+            // 金額を再計算
+            updateOptionPriceWithQuantity();
+            calculatePrice();
+        }
 
     });
 })(jQuery);
