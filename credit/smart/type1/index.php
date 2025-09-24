@@ -665,6 +665,9 @@ $formData = $_SESSION['formData'];
                 $(".pair-discount").remove();
             }
             
+            // オプションの表示を更新
+            updateOptionPriceWithQuantity();
+            
             calculatePrice();
         });
 
