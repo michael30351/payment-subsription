@@ -643,6 +643,9 @@ $formData = $_SESSION['formData'];
         $("#pair").on("change", function() {
             pair_entry_flag = $(this).is(":checked");
             
+            // 初回合計の表示を更新
+            updateFirstTotalDisplay();
+            
             // ペア割引の表示更新
             if(pair_entry_flag) {
                 // 表示を更新
@@ -670,6 +673,16 @@ $formData = $_SESSION['formData'];
             
             calculatePrice();
         });
+
+        // 初回合計の表示を更新する関数を追加
+        function updateFirstTotalDisplay() {
+            const firstTotalElement = $(".total-price .sum-price .list li:first");
+            if(pair_entry_flag) {
+                firstTotalElement.text("初回合計（ペア）");
+            } else {
+                firstTotalElement.text("初回合計");
+            }
+        }
 
         // オプション数量の処理を追加
 
