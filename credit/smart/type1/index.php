@@ -8,7 +8,32 @@ $dotenv->load();
 
 $shopId = $_ENV['SHOP_ID'];
 
-$formData = $_SESSION['formData'];
+$formData = $_SESSION['formData'] ?? [];
+
+// リダイレクト処理を追加
+if (!isset($_GET['openExternalBrowser'])) {
+    // パラメータなしでアクセスした場合、openExternalBrowser=1を付与してリダイレクト
+    $currentUrl = $_SERVER['REQUEST_URI'];
+    $redirectUrl = $currentUrl . (strpos($currentUrl, '?') !== false ? '&' : '?') . 'openExternalBrowser=1';
+    
+    header('Location: ' . $redirectUrl, true, 301);
+    exit;
+}
+
+// openExternalBrowserパラメータの処理を追加
+$openExternalBrowser = isset($_GET['openExternalBrowser']) && $_GET['openExternalBrowser'] == '1';
+
+// パラメータに応じた処理
+if ($openExternalBrowser) {
+    // 外部ブラウザ向けの処理
+    header('X-External-Browser: 1');
+    
+    // セッションにパラメータを保存
+    $_SESSION['openExternalBrowser'] = true;
+    
+    // デバッグ用（本番環境では削除推奨）
+    error_log("OpenExternalBrowser parameter detected: " . $_GET['openExternalBrowser']);
+}
 ?>
 
 <!DOCTYPE html>
